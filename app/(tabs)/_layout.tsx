@@ -11,7 +11,12 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const [modalVisible, setModalVisible] = useState(false);
-  const [inputType, setInputType] = useState(''); // Menyimpan tipe input (income, expense, wishlist)
+  const [inputType, setInputType] = useState('');
+  const [inputDescription, setInputDescription] = useState('');
+  const [inputTotal, setInputTotal] = useState('');
+  const [inputPaymentMethod, setInputPaymentMethod] = useState('');
+  const [inputDate, setInputDate] = useState('');
+  const [validationError, setValidationError] = useState('');
 
   const handleAddButtonPress = () => {
     setModalVisible(true);
@@ -19,12 +24,44 @@ export default function TabLayout() {
 
   const handleCancel = () => {
     setModalVisible(false);
+    resetInputs();
   };
 
   const handleSubmit = () => {
-    console.log('Submitting', inputType);
-    // Tambahkan logika submit data di sini
+    if (!validateInputs()) {
+      return;
+    }
+    console.log('Submitting', {
+      inputType,
+      inputDescription,
+      inputTotal,
+      inputPaymentMethod,
+      inputDate,
+    });
     setModalVisible(false);
+    resetInputs();
+  };
+
+  const validateInputs = () => {
+    if (inputType === 'wishlist' && !inputDescription) {
+      setValidationError('Deskripsi rencana tidak boleh kosong.');
+      return false;
+    }
+    if ((inputType === 'income' || inputType === 'expense') && (!inputDescription || !inputTotal || !inputPaymentMethod || !inputDate)) {
+      setValidationError('Semua input harus diisi.');
+      return false;
+    }
+    setValidationError('');
+    return true;
+  };
+
+  const resetInputs = () => {
+    setInputType('');
+    setInputDescription('');
+    setInputTotal('');
+    setInputPaymentMethod('');
+    setInputDate('');
+    setValidationError('');
   };
 
   return (
@@ -65,12 +102,9 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      {/* Tombol Tambah */}
       <TouchableOpacity style={styles.addButton} onPress={handleAddButtonPress}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
-
-      {/* Modal Input */}
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -126,10 +160,77 @@ export default function TabLayout() {
               </TouchableOpacity>
             </View>
 
-            <TextInput
-              placeholder="Masukkan keterangan"
-              style={styles.input}
-            />
+            {validationError ? <Text style={styles.errorText}>{validationError}</Text> : null}
+
+            {inputType === 'wishlist' && (
+              <TextInput
+                placeholder="Deskripsi rencana"
+                value={inputDescription}
+                onChangeText={setInputDescription}
+                style={styles.input}
+              />
+            )}
+
+            {(inputType === 'income' || inputType === 'expense') && (
+              <>
+                <TextInput
+                  placeholder="Deskripsi income/expense"
+                  value={inputDescription}
+                  onChangeText={setInputDescription}
+                  style={styles.input}
+                />
+                <TextInput
+                  placeholder="Total Bayar"
+                  keyboardType="numeric"
+                  value={inputTotal}
+                  onChangeText={setInputTotal}
+                  style={styles.input}
+                />
+
+                <View style={styles.radioGroup}>
+                  <TouchableOpacity
+                    onPress={() => setInputPaymentMethod('cash')}
+                    style={[
+                      styles.radioButton,
+                      inputPaymentMethod === 'cash' && styles.radioButtonSelected,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.radioText,
+                        inputPaymentMethod === 'cash' && styles.radioTextSelected,
+                      ]}
+                    >
+                      Cash
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setInputPaymentMethod('transfer')}
+                    style={[
+                      styles.radioButton,
+                      inputPaymentMethod === 'transfer' && styles.radioButtonSelected,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.radioText,
+                        inputPaymentMethod === 'transfer' && styles.radioTextSelected,
+                      ]}
+                    >
+                      Transfer
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={styles.datePickerLabel}>Tanggal</Text>
+                <TextInput
+                  placeholder="Tanggal"
+                  value={inputDate}
+                  onChangeText={setInputDate}
+                  style={styles.input}
+                />
+              </>
+            )}
 
             <View style={styles.actionButtons}>
               <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
@@ -247,5 +348,32 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: '#fff',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  radioButton: {
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  radioButtonSelected: {
+    backgroundColor: Colors.light.tint,
+  },
+  radioText: {
+    color: '#333',
+  },
+  radioTextSelected: {
+    color: '#fff',
+  },
+  datePickerLabel: {
+    marginVertical: 10,
   },
 });
