@@ -14,7 +14,7 @@ export default function HomeScreen() {
 
   const bankBalance = 938737;
   const walletBalance = 1461000;
-  const dailyExpense = 203000+506500+5000;
+  const dailyExpense = 203000 + 506500 + 5000;
   const monthlyExpense = dailyExpense;
   const yearlyExpense = monthlyExpense;
 
@@ -94,7 +94,7 @@ export default function HomeScreen() {
 
         {/* Recent Transactions */}
         <View style={styles.transactionsContainer}>
-          <Text style={styles.transactionsTitle}>5 Transaksi Terakhir</Text>
+          <Text style={styles.transactionsTitle}>Last transaction</Text>
           <FlatList
             data={transactions}
             keyExtractor={(item) => item.id}
@@ -181,8 +181,7 @@ const styles = StyleSheet.create({
   balanceLabel: {
     fontSize: 16,
     color: '#555',
-    marginBottom: 8,
-    flex: 1,
+    marginRight: 12,
   },
   balanceRow: {
     flexDirection: 'row',
