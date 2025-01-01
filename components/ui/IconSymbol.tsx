@@ -13,6 +13,7 @@ const MAPPING = {
   'star.fill': 'star', // Ikon untuk "wishlist"
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'refresh': 'refresh'
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
