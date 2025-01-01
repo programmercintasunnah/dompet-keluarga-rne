@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View, Text, FlatList,ScrollView } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View, Text, FlatList, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const [showBalance, setShowBalance] = useState(false);
   const transactions = [
-    { id: '1', description: 'Groceries', amount: -50 },
-    { id: '2', description: 'Salary', amount: 1000 },
-    { id: '3', description: 'Electricity Bill', amount: -100 },
-    { id: '4', description: 'Gym Membership', amount: -20 },
-    { id: '5', description: 'Coffee', amount: -5 },
+    { id: '1', description: 'Bayar kontrakan januari 2025', amount: -506500 },
+    { id: '2', description: 'Token listrik', amount: -203000 },
+    { id: '3', description: 'Belanja kedai', amount: -5000 },
   ];
 
-  const totalBalance = 5000;
-  const walletBalance = 2000;
-  const bankBalance = 3000;
-  const dailyExpense = 100;
-  const monthlyExpense = 500;
-  const yearlyExpense = 6000;
+  const bankBalance = 938737;
+  const walletBalance = 1461000;
+  const dailyExpense = 203000+506500+5000;
+  const monthlyExpense = dailyExpense;
+  const yearlyExpense = monthlyExpense;
+
+  const totalBalance = walletBalance + bankBalance;
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -48,11 +46,8 @@ export default function HomeScreen() {
 
         {/* Balance */}
         <View style={styles.balanceContainer}>
-          <Text style={styles.balanceLabel}>Total Saldo</Text>
           <View style={styles.balanceRow}>
-            <Text style={styles.balanceText}>
-              {showBalance ? `Rp ${totalBalance.toLocaleString('id-ID')}` : '••••••••'}
-            </Text>
+            <Text style={styles.balanceLabel}>Total Saldo</Text>
             <TouchableOpacity onPress={() => setShowBalance(!showBalance)}>
               <Ionicons
                 name={showBalance ? 'eye-off-outline' : 'eye-outline'}
@@ -61,16 +56,40 @@ export default function HomeScreen() {
               />
             </TouchableOpacity>
           </View>
-          <Text style={styles.subBalance}>Saldo di Bank: Rp {bankBalance.toLocaleString('id-ID')}</Text>
-          <Text style={styles.subBalance}>Saldo di Dompet: Rp {walletBalance.toLocaleString('id-ID')}</Text>
+          <Text style={styles.balanceText}>
+            {showBalance ? `Rp ${totalBalance.toLocaleString('id-ID')}` : '••••••••'}
+          </Text>
+          <View style={styles.hiddenBalances}>
+            <View style={styles.subBalanceRow}>
+              <MaterialCommunityIcons name="bank" size={20} color="#000" style={styles.icon} />
+              <Text style={styles.subBalanceText}>
+                {showBalance ? `Rp ${bankBalance.toLocaleString('id-ID')}` : '••••••••'}
+              </Text>
+            </View>
+            <View style={styles.subBalanceRow}>
+              <MaterialCommunityIcons name="wallet" size={20} color="#000" style={styles.icon} />
+              <Text style={styles.subBalanceText}>
+                {showBalance ? `Rp ${walletBalance.toLocaleString('id-ID')}` : '••••••••'}
+              </Text>
+            </View>
+          </View>
         </View>
 
         {/* Expenses */}
         <View style={styles.expensesContainer}>
           <Text style={styles.expensesTitle}>Pengeluaran</Text>
-          <Text style={styles.expense}>Hari ini: Rp {dailyExpense.toLocaleString('id-ID')}</Text>
-          <Text style={styles.expense}>Bulan ini: Rp {monthlyExpense.toLocaleString('id-ID')}</Text>
-          <Text style={styles.expense}>Tahun ini: Rp {yearlyExpense.toLocaleString('id-ID')}</Text>
+          <View style={styles.expensesBox}>
+            <Text style={styles.expenseTitle}>Today</Text>
+            <Text style={styles.expense}>Rp {dailyExpense.toLocaleString('id-ID')}</Text>
+          </View>
+          <View style={styles.expensesBox}>
+            <Text style={styles.expenseTitle}>This Month</Text>
+            <Text style={styles.expense}>Rp {monthlyExpense.toLocaleString('id-ID')}</Text>
+          </View>
+          <View style={styles.expensesBox}>
+            <Text style={styles.expenseTitle}>This Year</Text>
+            <Text style={styles.expense}>Rp {yearlyExpense.toLocaleString('id-ID')}</Text>
+          </View>
         </View>
 
         {/* Recent Transactions */}
@@ -109,11 +128,24 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     backgroundColor: '#f9f9f9',
   },
+  icon: {
+    marginRight: 8,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
   profileInfo: {
     flexDirection: 'row',
@@ -134,12 +166,23 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   balanceContainer: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
   balanceLabel: {
     fontSize: 16,
     color: '#555',
     marginBottom: 8,
+    flex: 1,
   },
   balanceRow: {
     flexDirection: 'row',
@@ -151,24 +194,66 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
   },
+  hiddenBalances: {
+    marginTop: 10,
+  },
+  subBalanceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
   subBalance: {
     fontSize: 14,
     color: '#555',
   },
   expensesContainer: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
   expensesTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
   },
+  expensesBox: {
+    backgroundColor: '#f5f5f5',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  },
+  expenseTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: '#333',
+  },
   expense: {
     fontSize: 14,
     color: '#555',
   },
   transactionsContainer: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    padding: 16,
     marginTop: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
   transactionsTitle: {
     fontSize: 16,
@@ -184,5 +269,22 @@ const styles = StyleSheet.create({
   },
   transactionAmount: {
     fontSize: 14,
+  },
+  subBalanceBox: {
+    backgroundColor: '#f5f5f5',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
+  },
+  subBalanceLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#555',
+  },
+  subBalanceText: {
+    fontSize: 14,
+    color: '#555',
   },
 });
